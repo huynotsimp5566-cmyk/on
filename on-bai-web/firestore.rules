@@ -1,0 +1,41 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Đổi thành Gmail admin của bạn (trùng với adminEmail trong public/config.js).
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email == 'ADMIN_GMAIL@gmail.com';
+    }
+    function signedIn() { return request.auth != null; }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isAdmin());
+      // Người dùng chỉ tạo được hồ sơ của mình, không tự đặt proUntil.
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['email', 'name', 'photo', 'createdAt']);
+      // Chỉ admin được sửa hồ sơ (cấp hoặc gia hạn Pro).
+      allow update: if isAdmin();
+
+      match /daily/{day} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+      match /progress/{doc} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+    }
+
+    match /payments/{id} {
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'plan', 'amount', 'code', 'status', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.status == 'pending'
+        && ((request.resource.data.plan == 'week' && request.resource.data.amount == 20000)
+         || (request.resource.data.plan == 'month' && request.resource.data.amount == 80000));
+      allow update: if isAdmin();
+    }
+  }
+}
