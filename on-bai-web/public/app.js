@@ -415,20 +415,44 @@ function checkRateLimit() {
   return { remaining, usageData };
 }
 
-// --- 4. HÀM TẠO ĐỀ VÀ TRỪ LƯỢT DÙNG ---
-function generateAiQuiz() {
-  const { remaining, usageData } = checkRateLimit();
+// --- 4. HÀM TẠO ĐỀ BẰNG GEMINI FLASH API ---
+async function generateAiQuiz() {
+    const remaining, usageData = checkRateLimit();
 
-  if (remaining <= 0) {
-    alert("⚠️ Bạn đã hết 5 lượt dùng Free trong 5 giờ! Vui lòng quay lại sau hoặc nâng cấp gói VIP (20k/80k) để dùng không giới hạn.");
-    return;
-  }
+    if (remaining <= 0) {
+        alert("⚠️ Bạn đã hết 5 lượt dùng Free trong 5 giờ! Vui lòng quay lại sau hoặc nâng cấp gói.");
+        return;
+    }
 
-  // Cập nhật tăng số lần dùng
-  usageData.count += 1;
-  localStorage.setItem('thisang_quiz_usage', JSON.stringify(usageData));
-  checkRateLimit();
+    // Hiển thị trạng thái đang gọi AI
+    alert("🤖 Đang kết nối với Google Gemini Flash để sinh bộ đề trắc nghiệm thông minh...");
+    
+    try {
+        const prompt = "Hãy tạo 5 câu hỏi trắc nghiệm khách quan (có đáp án A, B, C, D và giải thích) dựa trên chủ đề bài học này dưới dạng định dạng JSON chuẩn.";
+        
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
 
-  alert("🚀 Đang gửi tài liệu lên AI để sinh 5 bộ đề trắc nghiệm ngẫu nhiên...");
-  closeAiModal();
+        const data = await response.json();
+        const aiResponseText = data.candidates[0].content.parts[0].text;
+
+        console.log("Kết quả từ Gemini AI:", aiResponseText);
+
+        // Cập nhật tăng số lần dùng sau khi gọi thành công
+        usageData.count += 1;
+        localStorage.setItem('thisang_quiz_usage', JSON.stringify(usageData));
+        checkRateLimit();
+
+        alert("🎉 Đã sinh đề thành công bởi AI thành công!");
+        closeAiModal();
+
+    } catch (error) {
+        console.error("Lỗi gọi Gemini API:", error);
+        alert("❌ Có lỗi xảy ra khi kết nối với AI. Vui lòng kiểm tra lại khóa API!");
+    }
 }
