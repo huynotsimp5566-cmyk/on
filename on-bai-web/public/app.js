@@ -347,12 +347,24 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
 
-    // Gắn sự kiện cho các thẻ môn học
+    // Gắn sự kiện chuẩn cho các thẻ môn học để mở Modal AI
     document.querySelectorAll('.subject-box').forEach(box => {
         box.onclick = () => {
             const id = box.getAttribute('data-id');
             const sub = subjects.find(s => s.id === id);
-            openAiModal(sub ? sub.name : "Môn học");
+            const subjectName = sub ? sub.name : "Môn học";
+            
+            // Kích hoạt hiển thị Modal AI
+            const modal = document.getElementById('aiQuizModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                const titleEl = document.getElementById('modalSubjectTitle');
+                if (titleEl) {
+                    titleEl.innerText = `Tạo Đề Trắc Nghiệm Thông Minh - ${subjectName}`;
+                }
+            } else {
+                console.error("Không tìm thấy aiQuizModal trong DOM!");
+            }
         };
     });
 
