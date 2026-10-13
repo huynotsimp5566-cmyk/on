@@ -348,10 +348,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.subject-box').forEach(box => {
       box.onclick = () => {
-        const id = box.getAttribute('data-id');
-        const sub = subjects.find(s => s.id === id);
-        alert(`Đang mở phòng làm bài môn ${sub.name}!`);
-      };
+    const id = box.getAttribute('data-id');
+    const sub = subjects.find(s => s.id === id);
+    openAiModal(sub ? sub.name : "Môn học");
+};
     });
 
     const chatBubble = document.getElementById('chat-bubble-container');
