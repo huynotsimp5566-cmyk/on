@@ -1,7 +1,26 @@
 // --- ThiSáng - Giao diện hình ảnh minh họa HD phong cách chuyên nghiệp ---
 document.addEventListener('DOMContentLoaded', () => {
   const appContainer = document.getElementById('app') || document.body;
-  
+  // Bắt sự kiện click toàn cục để mở Modal AI cho thẻ môn học
+    document.addEventListener('click', function(e) {
+        const subjectBox = e.target.closest('.subject-box');
+        if (subjectBox) {
+            e.preventDefault();
+            const id = subjectBox.getAttribute('data-id');
+            const sub = typeof subjects !== 'undefined' ? subjects.find(s => s.id === id) : null;
+            const subjectName = sub ? sub.name : "Môn học";
+
+            const modal = document.getElementById('aiQuizModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                const titleEl = document.getElementById('modalSubjectTitle');
+                if (titleEl) {
+                    titleEl.innerText = `Tạo Đề Trắc Nghiệm Thông Minh - ${subjectName}`;
+                }
+            }
+        }
+    });
+
   // Danh sách môn học với ảnh minh họa HD
   const subjects = [
     { id: 'toan', name: 'Môn Toán', desc: 'Trắc nghiệm Toán học THPT', img: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?w=500&q=80' },
