@@ -340,18 +340,20 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }
 
+    // Gắn sự kiện cho các thẻ phương pháp học nổi bật
     document.querySelectorAll('.method-card').forEach(card => {
-      card.onclick = () => {
-        alert('Đang mở tính năng phương pháp học tập!');
-      };
+        card.onclick = () => {
+            openAiModal("Phương pháp học tập");
+        };
     });
 
+    // Gắn sự kiện cho các thẻ môn học
     document.querySelectorAll('.subject-box').forEach(box => {
-      box.onclick = () => {
-    const id = box.getAttribute('data-id');
-    const sub = subjects.find(s => s.id === id);
-    openAiModal(sub ? sub.name : "Môn học");
-};
+        box.onclick = () => {
+            const id = box.getAttribute('data-id');
+            const sub = subjects.find(s => s.id === id);
+            openAiModal(sub ? sub.name : "Môn học");
+        };
     });
 
     const chatBubble = document.getElementById('chat-bubble-container');
