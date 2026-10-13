@@ -1,6 +1,7 @@
 // --- ThiSáng - Giao diện hình ảnh minh họa HD phong cách chuyên nghiệp ---
 document.addEventListener('DOMContentLoaded', () => {
   const appContainer = document.getElementById('app') || document.body;
+  
   // Bắt sự kiện click toàn cục để mở Modal AI cho thẻ môn học
     document.addEventListener('click', function(e) {
         const subjectBox = e.target.closest('.subject-box');
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (titleEl) {
                     titleEl.innerText = `Tạo Đề Trắc Nghiệm Thông Minh - ${subjectName}`;
                 }
+                checkRateLimit();
             }
         }
     });
@@ -121,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
     bindEvents();
   }
 
-  // Giao diện Trang chủ với ảnh minh họa HD chuẩn đẹp
   function renderHomeContent(cardBg, textMain, textSub, borderColor) {
     const methods = [
       { title: 'Flashcard Ghi Nhớ Nhanh', desc: 'Thẻ ghi nhớ thông minh từ vựng, công thức', img: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&q=80', badge: 'HOT' },
@@ -132,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     return `
       <div>
-        <!-- DANH MỤC 1: PHƯƠNG PHÁP HỌC TẬP -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
           <h3 style="margin: 0; color: #38bdf8; font-size: 18px; font-weight: 700;">🚀 PHƯƠNG PHÁP HỌC TẬP NỔI BẬT</h3>
           <span style="color: ${textSub}; font-size: 13px; cursor: pointer;">Xem tất cả ></span>
@@ -140,10 +140,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-bottom: 40px;">
           ${methods.map(m => `
-            <div class="method-card" style="background: ${cardBg}; border: 1px solid${borderColor}; border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+            class="method-card" style="background: ${cardBg}; border: 1px solid${borderColor}; border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
               <span style="position: absolute; top: 12px; right: 12px; background: #ef4444; color: white; font-size: 10px; font-weight: bold; padding: 4px 10px; border-radius: 20px; z-index: 2; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">${m.badge}</span>
               <div style="height: 140px; overflow: hidden; position: relative;">
-                <img src="${m.img}" alt="${m.title}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                <img src="${m.img}" alt="${m.title}" style="width: 100%; height: 100%; object-fit: cover;">
               </div>
               <div style="padding: 16px;">
                 <h4 style="margin: 0 0 6px 0; color: ${textMain}; font-size: 16px; font-weight: 700;">${m.title}</h4>
@@ -153,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
           `).join('')}
         </div>
 
-        <!-- DANH MỤC 2: KHO MÔN HỌC THPT -->
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;">
           <h3 style="margin: 0; color: #38bdf8; font-size: 18px; font-weight: 700;">📚 KHO MÔN HỌC & ÔN THI</h3>
           <span style="color: ${textSub}; font-size: 13px; cursor: pointer;">Xem tất cả ></span>
@@ -163,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
           ${subjects.map(s => `
             <div class="subject-box" data-id="${s.id}" style="background: ${cardBg}; border: 1px solid${borderColor}; border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
               <div style="height: 120px; overflow: hidden;">
-                <img src="${s.img}" alt="${s.name}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+                <img src="${s.img}" alt="${s.name}" style="width: 100%; height: 100%; object-fit: cover;">
               </div>
               <div style="padding: 16px;">
                 <h4 style="margin: 0 0 6px 0; color: #38bdf8; font-size: 16px; font-weight: 700;">${s.name}</h4>
@@ -186,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ${subjects.map(s => `
           <div class="subject-box" data-id="${s.id}" style="background: ${cardBg}; border: 1px solid${borderColor}; border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
             <div style="height: 130px; overflow: hidden;">
-              <img src="${s.img}" alt="${s.name}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s;" onmouseover="this.style.transform='scale(1.08)'" onmouseout="this.style.transform='scale(1)'">
+              <img src="${s.img}" alt="${s.name}" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
             <div style="padding: 16px;">
               <h3 style="margin: 0 0 6px 0; color: #38bdf8; font-size: 18px; font-weight: 700;">${s.name}</h3>
@@ -359,31 +358,9 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     }
 
-    // Gắn sự kiện cho các thẻ phương pháp học nổi bật
     document.querySelectorAll('.method-card').forEach(card => {
         card.onclick = () => {
             openAiModal("Phương pháp học tập");
-        };
-    });
-
-    // Gắn sự kiện chuẩn cho các thẻ môn học để mở Modal AI
-    document.querySelectorAll('.subject-box').forEach(box => {
-        box.onclick = () => {
-            const id = box.getAttribute('data-id');
-            const sub = subjects.find(s => s.id === id);
-            const subjectName = sub ? sub.name : "Môn học";
-            
-            // Kích hoạt hiển thị Modal AI
-            const modal = document.getElementById('aiQuizModal');
-            if (modal) {
-                modal.style.display = 'flex';
-                const titleEl = document.getElementById('modalSubjectTitle');
-                if (titleEl) {
-                    titleEl.innerText = `Tạo Đề Trắc Nghiệm Thông Minh - ${subjectName}`;
-                }
-            } else {
-                console.error("Không tìm thấy aiQuizModal trong DOM!");
-            }
         };
     });
 
@@ -397,6 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   renderLayout();
 });
+
 // --- 1. HÀM MỞ VÀ ĐÓNG MODAL AI QUIZ ---
 function openAiModal(subjectName) {
   const modal = document.getElementById('aiQuizModal');
@@ -404,7 +382,7 @@ function openAiModal(subjectName) {
   if (modal) {
     if (title) title.innerText = "Tạo Đề AI - Môn " + subjectName;
     modal.style.display = 'flex';
-    checkRateLimit(); // Kiểm tra số lượt còn lại khi mở modal
+    checkRateLimit();
   }
 }
 
@@ -425,7 +403,7 @@ function handleFileSelect(event) {
 // --- 3. QUẢN LÝ GIỚI HẠN 5 LƯỢT / 5 GIỜ (FREEMIUM RATE LIMIT) ---
 function checkRateLimit() {
   const maxQuota = 5;
-  const resetInterval = 5 * 60 * 60 * 1000; // 5 giờ tính bằng mili-giây
+  const resetInterval = 5 * 60 * 60 * 1000;
   const now = Date.now();
 
   let usageData = JSON.parse(localStorage.getItem('thisang_quiz_usage')) || {
@@ -433,7 +411,6 @@ function checkRateLimit() {
     startTime: now
   };
 
-  // Nếu đã qua 5 giờ, reset lại lượt dùng
   if (now - usageData.startTime > resetInterval) {
     usageData = { count: 0, startTime: now };
     localStorage.setItem('thisang_quiz_usage', JSON.stringify(usageData));
@@ -449,14 +426,15 @@ function checkRateLimit() {
 }
 
 async function generateAiQuiz() {
-    const [remaining, usageData] = checkRateLimit();
+    const limitResult = checkRateLimit();
+    const remaining = limitResult.remaining;
+    const usageData = limitResult.usageData;
 
     if (remaining <= 0) {
         alert("⚠️ Bạn đã hết 5 lượt dùng Free trong 5 giờ! Vui lòng quay lại sau hoặc nâng cấp gói.");
         return;
     }
 
-    // Kiểm tra API Key từ file config.js
     if (typeof GEMINI_API_KEY === "undefined" || !GEMINI_API_KEY) {
         alert("❌ Chưa cấu hình GEMINI_API_KEY trong config.js!");
         return;
@@ -481,7 +459,6 @@ async function generateAiQuiz() {
             const aiResponseText = data.candidates[0].content.parts[0].text;
             console.log("Kết quả từ Gemini AI:", aiResponseText);
 
-            // Cập nhật tăng số lần dùng sau khi gọi thành công
             usageData.count += 1;
             localStorage.setItem("thisang_quiz_usage", JSON.stringify(usageData));
             checkRateLimit();
