@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px; margin-bottom: 40px;">
                     ${methods.map(m => `
-                        <div class="method-card" style="background: ${cardBg}; border: 1px solid${borderColor}; border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                        <div class="method-card" style="background: ${cardBg}; border: 1px solid ${borderColor}; border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
                             <span style="position: absolute; top: 12px; right: 12px; background: #ef4444; color: white; font-size: 10px; font-weight: bold; padding: 4px 10px; border-radius: 20px; z-index: 2;">${m.badge}</span>
                             <div style="height: 140px; overflow: hidden;">
                                 <img src="${m.img}" alt="${m.title}" style="width: 100%; height: 100%; object-fit: cover;">
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
                     ${subjects.map(s => `
-                        <div class="subject-box" data-id="${s.id}" style="background: ${cardBg}; border: 1px solid${borderColor}; border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                        <div class="subject-box" data-id="${s.id}" style="background: ${cardBg}; border: 1px solid ${borderColor}; border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
                             <div style="height: 120px; overflow: hidden;">
                                 <img src="${s.img}" alt="${s.name}" style="width: 100%; height: 100%; object-fit: cover;">
                             </div>
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 20px;">
                 ${subjects.map(s => `
-                    <div class="subject-box" data-id="${s.id}" style="background: ${cardBg}; border: 1px solid${borderColor}; border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                    <div class="subject-box" data-id="${s.id}" style="background: ${cardBg}; border: 1px solid ${borderColor}; border-radius: 16px; overflow: hidden; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
                         <div style="height: 130px; overflow: hidden;">
                             <img src="${s.img}" alt="${s.name}" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
@@ -298,7 +298,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('btn-buy-now').onclick = () => {
             if (selectedPrice === '0') {
-                alert('Bạn đang ở Gói FREE.');
+                showToast('Bạn đang ở Gói FREE.');
                 return;
             }
 
@@ -361,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const chatBubble = document.getElementById('chat-bubble-container');
         if (chatBubble) {
             chatBubble.onclick = () => {
-                alert('Đang kết nối trực tiếp với Admin Lê Nhật Huy để tư vấn học tập!');
+                showToast('Đang kết nối trực tiếp với Admin Lê Nhật Huy để tư vấn học tập!');
             };
         }
     }
@@ -369,105 +369,4 @@ document.addEventListener('DOMContentLoaded', () => {
     renderLayout();
 });
 
-// --- HÀM MỞ VÀ ĐÓNG MODAL AI QUIZ ---
-function openAiModal(subjectName) {
-    const modal = document.getElementById('aiQuizModal');
-    const title = document.getElementById('modalSubjectTitle');
-    if (modal) {
-        if (title) title.innerText = "Tạo Đề AI - " + subjectName;
-        modal.style.display = 'flex';
-        checkRateLimit();
-    } else {
-        console.error("Không tìm thấy aiQuizModal trong DOM!");
-    }
-}
-
-function closeAiModal() {
-    const modal = document.getElementById('aiQuizModal');
-    if (modal) modal.style.display = 'none';
-}
-
-// --- XỬ LÝ FILE TẢI LÊN ---
-function handleFileSelect(event) {
-    const file = event.target.files[0];
-    const nameDisplay = document.getElementById('selectedFileName');
-    if (file && nameDisplay) {
-        nameDisplay.innerText = "📄 Đã chọn: " + file.name;
-    }
-}
-
-// --- QUẢN LÝ GIỚI HẠN 5 LƯỢT / 5 GIỜ ---
-function checkRateLimit() {
-    const maxQuota = 5;
-    const resetInterval = 5 * 60 * 60 * 1000;
-    const now = Date.now();
-
-    let usageData = JSON.parse(localStorage.getItem('thisang_quiz_usage')) || {
-        count: 0,
-        startTime: now
-    };
-
-    if (now - usageData.startTime > resetInterval) {
-        usageData = { count: 0, startTime: now };
-        localStorage.setItem('thisang_quiz_usage', JSON.stringify(usageData));
-    }
-
-    const remaining = maxQuota - usageData.count;
-    const quotaElement = document.getElementById('remainingQuota');
-    if (quotaElement) {
-        quotaElement.innerText = remaining > 0 ? remaining : 0;
-    }
-
-    return { remaining, usageData };
-}
-
-// --- GỌI GEMINI FLASH AI SINH ĐỀ ---
-async function generateAiQuiz() {
-    const limitResult = checkRateLimit();
-    const remaining = limitResult.remaining;
-    const usageData = limitResult.usageData;
-
-    if (remaining <= 0) {
-        alert("⚠️ Bạn đã hết 5 lượt dùng Free trong 5 giờ! Vui lòng quay lại sau hoặc nâng cấp gói.");
-        return;
-    }
-
-    if (typeof GEMINI_API_KEY === "undefined" || !GEMINI_API_KEY) {
-        alert("❌ Chưa cấu hình GEMINI_API_KEY trong config.js!");
-        return;
-    }
-
-    alert("🤖 Đang kết nối với Google Gemini Flash để sinh bộ đề trắc nghiệm thông minh...");
-
-    try {
-        const prompt = "Hãy tạo 5 câu hỏi trắc nghiệm khách quan (có đáp án A, B, C, D và giải thích) dựa trên chủ đề bài học này dưới dạng định dạng JSON chuẩn.";
-
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }]
-            })
-        });
-
-        const data = await response.json();
-        
-        if (data.candidates && data.candidates[0]) {
-            const aiResponseText = data.candidates[0].content.parts[0].text;
-            console.log("Kết quả từ Gemini AI:", aiResponseText);
-
-            usageData.count += 1;
-            localStorage.setItem("thisang_quiz_usage", JSON.stringify(usageData));
-            checkRateLimit();
-
-            alert("🎉 Đã sinh đề thành công bởi AI!");
-            closeAiModal();
-        } else {
-            throw new Error("Phản hồi từ Gemini API không đúng định dạng.");
-        }
-
-    } catch (error) {
-        console.error("Lỗi gọi Gemini API:", error);
-        alert("❌ Có lỗi xảy ra khi kết nối với AI. Vui lòng kiểm tra lại khóa API!");
-    }
-}
+// Phần AI Quiz (mở modal, gọi AI, làm bài, chấm điểm) nằm trong file quiz.js

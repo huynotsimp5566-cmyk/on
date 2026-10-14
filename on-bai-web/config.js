@@ -15,5 +15,3 @@ if (!firebase.apps.length) {
 
 const auth = firebase.auth();
 const db = firebase.firestore();
-// Cấu hình Gemini API Key cho AI Quiz
-const GEMINI_API_KEY = "AIzaSyAcJFXG_ivm-H8pi7gqWWcMM_uiCBFf-Ww";

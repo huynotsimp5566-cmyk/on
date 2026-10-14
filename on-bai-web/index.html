@@ -20,7 +20,7 @@
   </div>
 
   <!-- 2. Nạp file app.js kèm chống cache triệt để -->
-<script src="app.js?v=final_fix"></script> 
+<script src="app.js?v=2"></script> 
  <!-- Modal Tùy chỉnh & Tải lên tài liệu tạo đề AI -->
   <div id="aiQuizModal" class="ai-modal-overlay" style="display: none;">
     <div class="ai-modal-content">
@@ -34,8 +34,8 @@
         <div class="upload-dropzone" onclick="document.getElementById('fileInput').click()">
           <div class="plus-icon-box">+</div>
           <p>Bấm vào đây hoặc kéo thả file tài liệu / ảnh chụp bài học vào đây</p>
-          <span class="file-support-text">Hỗ trợ PDF, DOCX, PNG, JPG</span>
-          <input type="file" id="fileInput" style="display: none;" accept=".pdf,.docx,.png,.jpg,.jpeg" onchange="handleFileSelect(event)">
+          <span class="file-support-text">Hỗ trợ PDF, PNG, JPG (tối đa 3MB)</span>
+          <input type="file" id="fileInput" style="display: none;" accept=".pdf,.png,.jpg,.jpeg" onchange="handleFileSelect(event)">
         </div>
         <div id="selectedFileName" class="selected-file-name"></div>
 
@@ -51,10 +51,11 @@
         </div>
 
         <!-- Nút tạo đề -->
-        <button class="generate-quiz-btn" onclick="generateAiQuiz()">🚀 Tạo 5 Đề Ngẫu Nhiên Bằng AI</button>
+        <button class="generate-quiz-btn" onclick="generateAiQuiz()">🚀 Tạo đề bằng AI</button>
         <p class="free-limit-note">Lượt dùng Free: Còn lại <span id="remainingQuota">5</span>/5 lượt trong 5 giờ.</p>
       </div>
     </div>
   </div>
+  <script src="quiz.js?v=2"></script>
 </body>
 </html>
